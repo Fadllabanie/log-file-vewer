@@ -18,6 +18,7 @@ class Path implements ReadableInterface
     public function read()
     {
         //  log.txt in public folder
+       
         $fileContent = file_get_contents(public_path($this->file));
 
         if (empty($fileContent)) {

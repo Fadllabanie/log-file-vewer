@@ -1,6 +1,8 @@
 <?php
 
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
 use App\Http\Controllers\LogReaderController;
 
 
@@ -16,11 +18,16 @@ use App\Http\Controllers\LogReaderController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-
+    return Inertia::render('Logs/Index');
 });
-Route::get('/home', function () {
-    return view('welcome');
-})->name('home');
 
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->name('dashboard');
+
+require __DIR__.'/auth.php';
+
+
+
+Route::get('home', [LogReaderController::class, 'home'])->name('home');
 Route::post('read-log', [LogReaderController::class, 'read'])->name('read');

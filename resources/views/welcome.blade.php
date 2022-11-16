@@ -5,7 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Log Reader</title>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
         body {
@@ -272,20 +274,23 @@
                 <p class="dt_box">FIle </p>
                 <form action="{{ route('read') }}" method="post" enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" id="_token" value="{{ csrf_token() }}">
+
                     <select name="type">
                         <option value="upload">Upload</option>
                         <option value="path">path</option>
                     </select>
                     <input type="file" name="file">
-                    <input type="text" name="file">
+                    <input type="text" name="path">
                     <button type="submit">Upload</button>
                 </form>
 
-               
+
             </div>
         </div>
         <div>
             <div class="responsive_table">
+
                 <table>
                     <thead>
                         <tr>
@@ -296,10 +301,10 @@
 
                     @if (empty($data))
                     @else
-                        @foreach ($data as $key => $item)
+                        @foreach (array_slice($data, 0, 10) as $key => $item)
                             <tr>
+                                <td>{{ $key + 1 }}</td>
                                 <td>{{ $item }}</td>
-                                <td>{{ $key }}</td>
                             </tr>
                         @endforeach
 
@@ -307,14 +312,37 @@
 
                     @endif
                 </table>
+                <button onclick="next()">sdfsd</button>
+
             </div>
         </div>
-
+        <script type="text/javascript">      
+            window.csrf_token = "{{ csrf_token() }}"
+          </script>
 
         <script>
-          function clearAll(){
-            window.location.href = "{{route('home')}}";
-          }
+            function next() {
+                fetch('{{ route('read') }}', {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    body: JSON.stringify({
+                        path: "log.txt",
+                    })
+                }).then(result => {
+                    // do something with the result
+                    console.log("Completed with result:", result);
+                }).catch(err => {
+                    // if any error occured, then catch it here
+                    console.error(err);
+                });
+            }
+        </script>
+        <script>
+            function clearAll() {
+                window.location.href = "{{ route('home') }}";
+            }
         </script>
     </section>
 
